@@ -7,7 +7,7 @@ st.title("🧬 Fasta Filter 🔍")
 instructions = """
 To use this app, please follow these steps:
 1. Upload a FASTA file containing protein sequences.
-2. Upload a TXT file with the IDs you want to filter, one per line.
+2. Upload a TXT file with the IDs you want to filter, one per line. (Example: `P12345`)
 3. Click the "Apply Filter" button to process and download the filtered FASTA file.
 """
 st.write(instructions)
