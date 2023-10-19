@@ -2,7 +2,8 @@ import fastaframes as ff
 import streamlit as st
 
 st.title("Fasta Filter")
-st.write('Upload a fasta file and a txt file with the ids to filter.')
+st.write('Upload a fasta file and a txt file with the ids to filter. The ids should be one per line and '
+         'correspond to the unique_identifier column in the fasta file.')
 
 fasta_file = st.file_uploader("Upload FASTA file", type='fasta')
 filter_file = st.file_uploader("Upload txt file", type='txt')
