@@ -1,2 +1,3 @@
-fastaframes==1.1.0
-streamlit==1.27.2
+fastaframes==1.2.2
+filterframes==0.1.3
+streamlit==1.45.1

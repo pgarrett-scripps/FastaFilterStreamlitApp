@@ -1,5 +1,8 @@
 import fastaframes as ff
 import streamlit as st
+from filterframes import from_dta_select_filter, to_dta_select_filter
+
+
 
 st.title("🧬 Fasta Filter 🔍")
 
@@ -15,28 +18,24 @@ st.write(instructions)
 fasta_file = st.file_uploader("Upload FASTA file", type=['fasta'])
 filter_file = st.file_uploader("Upload TXT file", type=['txt'])
 
+debug = st.toggle('Debug')
+
 if fasta_file and filter_file and st.button("Apply Filter"):
     try:
         with st.spinner('Filtering sequences...'):
             fasta_df = ff.to_df(fasta_file)
-            filter_ids = {line.decode().rstrip() for line in filter_file.readlines()}
-            filter_ids = filter_ids - {''}
-            filtered_df = fasta_df[fasta_df['unique_identifier'].isin(filter_ids)]
+
+            # Read DTASelect-filter.txt file and create peptide and protein dataframes
+            header_lines, peptide_df, protein_df, end_lines = from_dta_select_filter(filter_file)
+
+            if debug:
+                st.dataframe(fasta_df)
+                st.dataframe(protein_df)
+
+            locus_ids = protein_df['Locus'].unique()
+
+            filtered_df = fasta_df[fasta_df['protein_id'].isin(locus_ids)]
             filter_fasta = ff.to_fasta(filtered_df).getvalue()
-
-            missing_ids = filter_ids - set(filtered_df['unique_identifier'])
-
-            with st.expander("Show missing IDs"):
-                st.write(missing_ids)
-
-        num_filter_ids = len(filter_ids)
-
-        c1, c2, c3 = st.columns(3)
-
-        # Display the metrics using st.metrics
-        c1.metric(label="Protein Sequences in FASTA File", value=len(fasta_df))
-        c2.metric(label="Filter IDs in TXT File", value=num_filter_ids)
-        c3.metric(label="Number of sequences retained", value=len(filtered_df))
 
         # Provide download button
         st.download_button(label="Download FASTA", data=filter_fasta, file_name='filtered.fasta')
